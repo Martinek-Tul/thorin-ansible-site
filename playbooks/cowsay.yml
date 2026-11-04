@@ -1,0 +1,14 @@
+---
+- name: Instalace EPEL repozitare a cowsay
+  hosts: thorin
+  become: true
+  tasks:
+    - name: Pridani EPEL repa
+      ansible.builtin.dnf:
+        name: epel-release
+        state: present
+
+    - name: Instalace balicku cowsay
+      ansible.builtin.dnf:
+        name: cowsay
+        state: present
