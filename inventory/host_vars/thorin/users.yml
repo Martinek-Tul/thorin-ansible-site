@@ -1,0 +1,5 @@
+---
+my_username: "favuser"
+my_ssh_keys:
+ - "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFJccb0OC+dWJfAQhkbLT1YPR/QcYgxeY/tKyhN8BiA3 maty@DESKTOP-VG9E5BO"
+ - "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIH1LVNZK3qApqQ/GLYiWo7WmG6+RPJllpxt0C4pqjgoH maty@Maty-noteboook"

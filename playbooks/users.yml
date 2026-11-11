@@ -1,0 +1,18 @@
+---
+- name: SSH klice
+  hosts: all
+  become: true
+  tasks:
+    - name: Zajistit existenci uzivatele bez zmeny hesla
+      ansible.builtin.user:
+        name: "{{ my_username }}"
+        state: present
+        shell: /bin/bash
+        create_home: true
+
+    - name: Nastavit autorizovane klice a odstranit nedefinovane
+      ansible.builtin.authorized_key:
+        user: "{{ my_username }}"
+        key: "{{ my_ssh_keys | join('\n') }}"
+        state: present
+        exclusive: true
