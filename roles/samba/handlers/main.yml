@@ -1,0 +1,11 @@
+---
+- name: Obnovit SELinux kontext
+  ansible.builtin.command:
+    cmd: "restorecon -Rv {{ item.path }}"
+  loop: "{{ samba_shares }}"
+  changed_when: true
+
+- name: Restartovat Sambu
+  ansible.builtin.service:
+    name: smb
+    state: restarted

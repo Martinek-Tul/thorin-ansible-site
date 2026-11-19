@@ -1,0 +1,63 @@
+---
+- name: Instalace balicku Samba a nastroju pro SELinux
+  ansible.builtin.dnf:
+    name:
+      - samba
+      - samba-client
+      - policycoreutils-python-utils
+    state: present
+
+- name: Vytvoreni skupiny pro Sambu
+  ansible.builtin.group:
+    name: "{{ samba_group }}"
+    state: present
+
+- name: Vytvoreni uzivatele bez home adresare a bez shellu
+  ansible.builtin.user:
+    name: "{{ samba_user }}"
+    group: "{{ samba_group }}"
+    shell: /sbin/nologin
+    create_home: false
+    system: true
+    state: present
+
+- name: Vytvoreni adresaru pro sdilene slozky
+  ansible.builtin.file:
+    path: "{{ item.path }}"
+    state: directory
+    owner: "{{ samba_user }}"
+    group: "{{ samba_group }}"
+    mode: "0770"
+  loop: "{{ samba_shares }}"
+
+- name: Nastaveni SELinux kontextu pro sdilene slozky
+  community.general.sefcontext:
+    target: "{{ item.path }}(/.*)?"
+    setype: samba_share_t
+    state: present
+  loop: "{{ samba_shares }}"
+  notify: Obnovit SELinux kontext
+
+- name: Nasazeni konfiguracniho souboru smb.conf z Jinja2 sablony
+  ansible.builtin.template:
+    src: smb.conf.j2
+    dest: /etc/samba/smb.conf
+    owner: root
+    group: root
+    mode: "0644"
+    validate: "testparm -s %s"
+  notify: Restartovat Sambu
+
+- name: Povoleni sluzby Samba na firewallu v zone pro sit TUL
+  ansible.posix.firewalld:
+    service: samba
+    zone: "{{ samba_firewall_zone }}"
+    permanent: true
+    immediate: true
+    state: enabled
+
+- name: Spusteni a povoleni sluzby smb po startu
+  ansible.builtin.service:
+    name: smb
+    state: started
+    enabled: true

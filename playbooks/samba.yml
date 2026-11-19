@@ -1,0 +1,6 @@
+- name: Instalace a konfigurace Samba serveru
+  hosts: servers
+  become: true
+
+  roles:
+    - samba

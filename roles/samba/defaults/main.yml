@@ -1,0 +1,30 @@
+---
+# uzivatel a skupina
+samba_user: "smb_user"
+samba_group: "smb_users"
+
+# globalni parametry Samby
+samba_workgroup: "WORKGROUP"
+samba_server_string: "Samba Server ({{ inventory_hostname }})"
+samba_security: "user"
+samba_map_to_guest: "Bad User"
+
+# seznam sdilenych slozek
+samba_shares:
+  - name: "public"
+    path: "/srv/samba/public"
+    comment: "Verejna slozka pouze pro cteni"
+    browseable: "yes"
+    read_only: "yes"
+    guest_ok: "yes"
+    valid_users: ""
+  - name: "private"
+    path: "/srv/samba/private"
+    comment: "Soukroma slozka pro uzivatele Samby"
+    browseable: "yes"
+    read_only: "no"
+    guest_ok: "no"
+    valid_users: "{{ samba_user }}"
+
+# Síť TUL pro omezení na firewallu
+samba_firewall_zone: "home"
